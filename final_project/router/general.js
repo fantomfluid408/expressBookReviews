@@ -27,37 +27,78 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
-  res.send(JSON.stringify(books,null,4));
+  let myPromise = new Promise((resolve, reject) => {
+       setTimeout(() => {
+        resolve(books);
+       }, 500);
+  });
+
+  myPromise.then(successData => {
+    console.log ("promise filled");
+    res.send(JSON.stringify(successData,null,4));
+  }).catch(error => {res.status(500).json({message: "An error occurred"})});
+
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
     const isbn = req.params.isbn;
-    res.send(books[isbn]);
+
+    let myPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+         resolve(books[isbn]);
+        }, 5000);
+   });
+ 
+   myPromise.then(successData => {
+     console.log ("promise filled");
+     res.send(successData);
+   }).catch(error => {res.status(500).json({message: "An error occurred"})});
+ 
  });
+ 
+  
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
    const author = req.params.author;
-   for (let key in books) {
-    if (books[key].author === author)
-        return res.send(books[key])
-   }
 
-    return res.status(404).json({message: "Author not found"});
+   let myPromise = new Promise((resolve, reject) => {
+    for (let key in books) {
+        if (books[key].author === author)
+            resolve(books[key])
+       }
+    
+    });
+
+    myPromise.then(successData => {
+     console.log ("promise filled");
+     res.send(successData);
+    }).catch(error => {res.status(500).json({message: "An error occurred"})});
+
 });
+   
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;
-    for (let key in books) {
-     if (books[key].title === title)
-         return res.send(books[key])
-    }
+
+    let myPromise = new Promise((resolve, reject) => {
+        for (let key in books) {
+            if (books[key].title === title)
+                resolve(books[key])
+           }
+        
+        });
+    
+        myPromise.then(successData => {
+         console.log ("promise filled");
+         res.send(successData);
+        }).catch(error => {res.status(500).json({message: "An error occurred"})});
+
+    
  
-     return res.status(404).json({message: "Title not found"});
-});
+    });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
